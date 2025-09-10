@@ -33,7 +33,6 @@ enum Commands {
     },
 }
 
-// Finds the most frequent byte in a chunk of data.
 fn most_frequent_byte(chunk: &[u8]) -> u8 {
     if chunk.is_empty() {
         return 0;
@@ -48,7 +47,6 @@ fn most_frequent_byte(chunk: &[u8]) -> u8 {
     max_byte as u8
 }
 
-// Visualizes a file by analyzing the most frequent byte in 200x200 chunks.
 fn visualize_file(filename: &str) -> Result<()> {
     println!("=== Visualizing {} in 200x200 grid ===", filename);
     
@@ -98,7 +96,6 @@ fn visualize_file(filename: &str) -> Result<()> {
     Ok(())
 }
 
-// Handles overwriting a single file with zeros.
 fn overwrite_single_file(filename: &str) -> Result<()> {
     println!("=== Overwriting {} ===", filename);
     
@@ -133,7 +130,6 @@ fn overwrite_single_file(filename: &str) -> Result<()> {
     Ok(())
 }
 
-// Handles overwriting a single file or recursively overwriting a directory.
 fn overwrite_file(path_str: &str, skip_confirmation: bool, recursive: bool) -> Result<()> {
     let path = Path::new(path_str);
     
@@ -162,7 +158,7 @@ fn overwrite_file(path_str: &str, skip_confirmation: bool, recursive: bool) -> R
             }
         }
         
-        // Recursively walk the directory and overwrite files
+        // recursive acc some yeye ass website, do check please
         for entry in fs::read_dir(path)? {
             let entry = entry?;
             let entry_path = entry.path();
@@ -177,7 +173,7 @@ fn overwrite_file(path_str: &str, skip_confirmation: bool, recursive: bool) -> R
     } else if path.is_file() {
         // Confirmation for single file overwrite
         if !skip_confirmation {
-            println!("WARNING: This will permanently overwrite all data in '{}'", path_str);
+            println!("WARNING: This will permanently overwrite all data in '{}'", path_str);//ai recommended crap, Imma just do it 
             print!("Are you sure you want to continue? (y/N): ");
             io::stdout().flush()?;
             
