@@ -53,10 +53,12 @@ fn visualize_file(filename: &str) -> Result<Vec<u8>> {
     let mut file = std::fs::File::open(filename)?;
     let file_size = file.metadata()?.len() as usize;
     let chunk_size = file_size / 40000;
+    let mut result_array = Vec::with_capacity(40000);
+
     
     if file_size == 0 {
         println!("File is empty!");
-        return Ok(());
+        return Ok(vec![0; 40000]);
     }
     
     if chunk_size == 0 {
@@ -67,30 +69,16 @@ fn visualize_file(filename: &str) -> Result<Vec<u8>> {
     let effective_chunk_size = std::cmp::max(chunk_size, 1);
     let mut buffer = vec![0u8; effective_chunk_size];
     
-    println!("File size: {} bytes | Chunk size: {} bytes", file_size, effective_chunk_size);
-    println!("Grid (each cell = most frequent byte in chunk):\n");
     
-    for row in 0..200 {
-        for col in 0..200 {
-            let chunk_idx = row * 200 + col;
-            let offset = (chunk_idx * effective_chunk_size) as u64;
-            
-            if offset >= file_size as u64 {
-                print!("00 ");
-                continue;
-            }
-            
-            file.seek(SeekFrom::Start(offset))?;
-            let bytes_read = file.read(&mut buffer)?;
-            
-            if bytes_read == 0 {
-                print!("00 ");
-            } else {
-                let representative_byte = most_frequent_byte(&buffer[..bytes_read]);
-                print!("{:02x} ", representative_byte);
-            }
+    for _ in 0..40000 {
+        let bytes_read = file.read(&mut buffer)?;
+        
+        if bytes_read == 0 {
+            result_array.push(0);
+        } else {
+            let representative_byte = most_frequent_byte(&buffer[..bytes_read]);
+            result_array.push(representative_byte);
         }
-        println!();
     }
     
 Ok(result_array)
@@ -197,7 +185,15 @@ fn main() -> Result<()> {
     
     match &cli.command {
         Commands::Visualize { file } => {
-            visualize_file(&file)?;
+            let result_array = visualize_file(&file)?;
+            println!("200x200 array of representative bytes:");
+            for row in 0..200 {
+                for col in 0..200 {
+                    let index = row * 200 + col;
+                    print!("{:02x} ", result_array[index]);
+                }
+                println!();
+            }
         }
         Commands::Overwrite { file, yes, recursive } => {
             overwrite_file(&file, *yes, *recursive)?;
