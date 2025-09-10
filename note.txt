@@ -1,0 +1,4 @@
+dd if=/dev/urandom of=test.bin bs=1M count=1024
+
+
+/dev/zero would do zeros 
