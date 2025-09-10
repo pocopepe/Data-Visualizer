@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Visualizer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen p-4">
+
+    <div class="bg-white rounded-xl shadow-2xl p-8 max-w-lg w-full transform transition-all hover:scale-105">
+        <h1 class="text-3xl font-bold text-gray-800 text-center mb-4">File Visualizer</h1>
+        <p class="text-center text-gray-500 mb-6">
+            Visualizing an array of binary content as a 200x200 grid with color ranges.
+        </p>
+
+        <div class="flex flex-col items-center justify-center space-y-4">
+            <canvas id="visualizerCanvas" width="400" height="400" 
+                    class="border-4 border-gray-200 rounded-lg shadow-inner"></canvas>
+            
+            <button id="visualizeButton" 
+                    class="w-full px-6 py-3 bg-blue-600 text-white font-semibold rounded-full shadow-lg hover:bg-blue-700 transition-transform duration-200 ease-in-out transform hover:scale-105">
+                Visualize Array
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const dataArray = (function() {
+            const arr = [];
+            for (let i = 0; i < 40000; i++) {
+                arr.push(Math.floor(Math.random() * 256));
+            }
+            return arr;
+        })();
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const canvas = document.getElementById('visualizerCanvas');
+            const ctx = canvas.getContext('2d');
+            const visualizeButton = document.getElementById('visualizeButton');
+            const gridSize = 200;
+            const pixelSize = canvas.width / gridSize;
+            
+            const colorRanges = [
+                { max: 63, color: 'rgb(255, 102, 102)' },
+                { max: 127, color: 'rgb(255, 178, 102)' },
+                { max: 191, color: 'rgb(102, 255, 102)' },
+                { max: 255, color: 'rgb(102, 178, 255)' }
+            ];
+
+            function visualizeData(data) {
+                if (data.length !== gridSize * gridSize) {
+                    console.error("Data array must contain exactly 40000 elements for a 200x200 grid.");
+                    return;
+                }
+                
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                for (let y = 0; y < gridSize; y++) {
+                    for (let x = 0; x < gridSize; x++) {
+                        const index = y * gridSize + x;
+                        const byteValue = data[index];
+                        
+                        let color = '#000000';
+                        for (const range of colorRanges) {
+                            if (byteValue <= range.max) {
+                                color = range.color;
+                                break;
+                            }
+                        }
+                        
+                        ctx.fillStyle = color;
+                        ctx.fillRect(x * pixelSize, y * pixelSize, pixelSize, pixelSize);
+                    }
+                }
+            }
+
+            visualizeData(dataArray);
+
+            visualizeButton.addEventListener('click', () => {
+                visualizeData(dataArray);
+            });
+        });
+    </script>
+</body>
+</html>

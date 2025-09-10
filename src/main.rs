@@ -47,7 +47,7 @@ fn most_frequent_byte(chunk: &[u8]) -> u8 {
     max_byte as u8
 }
 
-fn visualize_file(filename: &str) -> Result<()> {
+fn visualize_file(filename: &str) -> Result<Vec<u8>> {
     println!("=== Visualizing {} in 200x200 grid ===", filename);
     
     let mut file = std::fs::File::open(filename)?;
@@ -93,7 +93,7 @@ fn visualize_file(filename: &str) -> Result<()> {
         println!();
     }
     
-    Ok(())
+Ok(result_array)
 }
 
 fn overwrite_single_file(filename: &str) -> Result<()> {
